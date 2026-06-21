@@ -3,6 +3,7 @@
     "step": {
       "user": {
         "title": "Connexion à OPNsense",
+        "description": "Renseigne l'URL de ton firewall et tes identifiants API (Système > Accès > Utilisateurs > clés API).",
         "data": {
           "host": "URL du firewall",
           "api_key": "Clé API",
