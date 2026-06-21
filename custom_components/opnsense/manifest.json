@@ -1,0 +1,11 @@
+{
+  "domain": "opnsense",
+  "name": "OPNsense Firmware Update",
+  "version": "0.1.0",
+  "codeowners": ["@Croustipate"],
+  "config_flow": true,
+  "documentation": "https://github.com/Croustipate/opnsense-ha",
+  "issue_tracker": "https://github.com/Croustipate/opnsense-ha/issues",
+  "iot_class": "local_polling",
+  "requirements": []
+}
