@@ -3,7 +3,9 @@ from __future__ import annotations
 
 from homeassistant.components.sensor import SensorDeviceClass, SensorEntity
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import CONF_HOST
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
@@ -21,10 +23,16 @@ async def async_setup_entry(
     data = hass.data[DOMAIN][entry.entry_id]
     coordinator: OpnsenseFirmwareCoordinator = data["coordinator"]
     tracker: LastUpdateTracker = data["tracker"]
+    device_info = DeviceInfo(
+        identifiers={(DOMAIN, entry.entry_id)},
+        name="OPNsense",
+        manufacturer="Deciso",
+        configuration_url=entry.data[CONF_HOST],
+    )
     async_add_entities(
         [
-            OpnsenseFirmwareSensor(coordinator, entry),
-            OpnsenseLastUpdateSensor(tracker, entry),
+            OpnsenseFirmwareSensor(coordinator, entry, device_info),
+            OpnsenseLastUpdateSensor(tracker, entry, device_info),
         ]
     )
 
@@ -40,10 +48,14 @@ class OpnsenseFirmwareSensor(
     _attr_options = ["up_to_date", "update_available"]
 
     def __init__(
-        self, coordinator: OpnsenseFirmwareCoordinator, entry: ConfigEntry
+        self,
+        coordinator: OpnsenseFirmwareCoordinator,
+        entry: ConfigEntry,
+        device_info: DeviceInfo,
     ) -> None:
         super().__init__(coordinator)
         self._attr_unique_id = f"{entry.entry_id}_firmware"
+        self._attr_device_info = device_info
 
     @property
     def native_value(self) -> str | None:
@@ -79,9 +91,15 @@ class OpnsenseLastUpdateSensor(RestoreEntity, SensorEntity):
     _attr_device_class = SensorDeviceClass.ENUM
     _attr_options = ["idle", "in_progress", "success", "failed"]
 
-    def __init__(self, tracker: LastUpdateTracker, entry: ConfigEntry) -> None:
+    def __init__(
+        self,
+        tracker: LastUpdateTracker,
+        entry: ConfigEntry,
+        device_info: DeviceInfo,
+    ) -> None:
         self._tracker = tracker
         self._attr_unique_id = f"{entry.entry_id}_last_update"
+        self._attr_device_info = device_info
         self._remove_listener: callable | None = None
 
     async def async_added_to_hass(self) -> None:

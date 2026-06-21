@@ -3,8 +3,10 @@ from __future__ import annotations
 
 from homeassistant.components.button import ButtonEntity
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import CONF_HOST
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .api import OpnsenseApiError
@@ -20,10 +22,16 @@ async def async_setup_entry(
     data = hass.data[DOMAIN][entry.entry_id]
     coordinator: OpnsenseFirmwareCoordinator = data["coordinator"]
     tracker: LastUpdateTracker = data["tracker"]
+    device_info = DeviceInfo(
+        identifiers={(DOMAIN, entry.entry_id)},
+        name="OPNsense",
+        manufacturer="Deciso",
+        configuration_url=entry.data[CONF_HOST],
+    )
     async_add_entities(
         [
-            OpnsenseCheckNowButton(coordinator, entry),
-            OpnsenseInstallUpdateButton(coordinator, tracker, entry),
+            OpnsenseCheckNowButton(coordinator, entry, device_info),
+            OpnsenseInstallUpdateButton(coordinator, tracker, entry, device_info),
         ]
     )
 
@@ -35,10 +43,14 @@ class OpnsenseCheckNowButton(ButtonEntity):
     _attr_translation_key = "check_now"
 
     def __init__(
-        self, coordinator: OpnsenseFirmwareCoordinator, entry: ConfigEntry
+        self,
+        coordinator: OpnsenseFirmwareCoordinator,
+        entry: ConfigEntry,
+        device_info: DeviceInfo,
     ) -> None:
         self._coordinator = coordinator
         self._attr_unique_id = f"{entry.entry_id}_check_now"
+        self._attr_device_info = device_info
 
     async def async_press(self) -> None:
         """Force a refresh of the firmware coordinator."""
@@ -56,10 +68,12 @@ class OpnsenseInstallUpdateButton(ButtonEntity):
         coordinator: OpnsenseFirmwareCoordinator,
         tracker: LastUpdateTracker,
         entry: ConfigEntry,
+        device_info: DeviceInfo,
     ) -> None:
         self._coordinator = coordinator
         self._tracker = tracker
         self._attr_unique_id = f"{entry.entry_id}_install_update"
+        self._attr_device_info = device_info
 
     @property
     def available(self) -> bool:
