@@ -1,0 +1,43 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connexion à OPNsense",
+        "data": {
+          "host": "URL du firewall",
+          "api_key": "Clé API",
+          "api_secret": "Secret API",
+          "verify_ssl": "Vérifier le certificat SSL"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Clé ou secret API invalide",
+      "cannot_connect": "Impossible de se connecter au firewall"
+    }
+  },
+  "entity": {
+    "sensor": {
+      "firmware": {
+        "name": "Firmware",
+        "state": {
+          "up_to_date": "À jour",
+          "update_available": "Mise à jour disponible"
+        }
+      },
+      "last_update": {
+        "name": "Dernière mise à jour",
+        "state": {
+          "idle": "Aucune",
+          "in_progress": "En cours",
+          "success": "Réussie",
+          "failed": "Échouée"
+        }
+      }
+    },
+    "button": {
+      "check_now": { "name": "Vérifier maintenant" },
+      "install_update": { "name": "Installer la mise à jour" }
+    }
+  }
+}

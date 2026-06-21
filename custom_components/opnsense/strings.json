@@ -1,0 +1,43 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to OPNsense",
+        "data": {
+          "host": "Firewall URL",
+          "api_key": "API key",
+          "api_secret": "API secret",
+          "verify_ssl": "Verify SSL certificate"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Invalid API key or secret",
+      "cannot_connect": "Failed to connect to the firewall"
+    }
+  },
+  "entity": {
+    "sensor": {
+      "firmware": {
+        "name": "Firmware",
+        "state": {
+          "up_to_date": "Up to date",
+          "update_available": "Update available"
+        }
+      },
+      "last_update": {
+        "name": "Last update",
+        "state": {
+          "idle": "None",
+          "in_progress": "In progress",
+          "success": "Succeeded",
+          "failed": "Failed"
+        }
+      }
+    },
+    "button": {
+      "check_now": { "name": "Check now" },
+      "install_update": { "name": "Install update" }
+    }
+  }
+}
